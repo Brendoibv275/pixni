@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server';
 import { Resend } from 'resend';
 
-// Inicializa o Resend com a chave que será adicionada no .env
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 export async function POST(req: Request) {
+    // Inicializa dentro do handler para não quebrar o build quando a env var não está disponível
+    const resend = new Resend(process.env.RESEND_API_KEY);
+
     try {
         const body = await req.json();
         const { participantName, participantEmail, score, quizResults, generatedPrompt } = body;
