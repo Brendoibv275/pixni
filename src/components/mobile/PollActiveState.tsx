@@ -3,7 +3,8 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase/client';
 import { Database } from '@/types/supabase';
-import { CheckCircle2, Loader2, ChevronRight } from 'lucide-react';
+import { CORRECT_ANSWERS } from '@/data/slidesDeck';
+import { CheckCircle2, XCircle, Loader2, ChevronRight } from 'lucide-react';
 
 type Question = Database['public']['Tables']['questions']['Row'];
 
@@ -33,6 +34,8 @@ export function PollActiveState({ sessionId, participantId, currentSlideIndex }:
     const [allDone, setAllDone] = useState(false);
     const [openTextAnswer, setOpenTextAnswer] = useState('');
     const [error, setError] = useState('');
+    const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
+    const [correctAnswerText, setCorrectAnswerText] = useState<string | null>(null);
 
     // 1. Busca TODAS as perguntas do slide atual
     useEffect(() => {
@@ -41,6 +44,8 @@ export function PollActiveState({ sessionId, participantId, currentSlideIndex }:
             setCurrentQIndex(0);
             setAllDone(false);
             setSubmitted(false);
+            setIsCorrect(null);
+            setCorrectAnswerText(null);
             try {
                 const { data, error } = await supabase
                     .from('questions')
@@ -78,26 +83,37 @@ export function PollActiveState({ sessionId, participantId, currentSlideIndex }:
 
         setSubmitted(false);
         setOpenTextAnswer('');
+        setIsCorrect(null);
+        setCorrectAnswerText(null);
 
         // Carrega opções (pode vir como JSON string do banco)
         setOptions(parseOptions((question as any).options));
 
         // Verifica se já respondeu esta pergunta
         const checkPreviousAnswer = async () => {
-            const { count } = await supabase
+            const { data } = await supabase
                 .from('answers')
-                .select('*', { count: 'exact', head: true })
+                .select('*')
                 .eq('question_id', question.id)
                 .eq('participant_id', participantId)
-                .eq('session_id', sessionId);
+                .eq('session_id', sessionId)
+                .limit(1);
 
-            if (count && count > 0) {
+            const existing = data && data.length > 0 ? (data[0] as any) : null;
+            if (existing) {
                 setSubmitted(true);
+                // Recalculate correct/incorrect for already-answered questions
+                const slideIdx = (question as any).slide_index ?? currentSlideIndex;
+                const correctAns = CORRECT_ANSWERS[slideIdx]?.[currentQIndex];
+                if (correctAns !== undefined) {
+                    setIsCorrect((existing.answer_text as string).trim() === correctAns.trim());
+                    setCorrectAnswerText(correctAns);
+                }
             }
         };
 
         checkPreviousAnswer();
-    }, [currentQIndex, questions, participantId, sessionId]);
+    }, [currentQIndex, questions, participantId, sessionId, currentSlideIndex]);
 
     const handleSubmit = async (answerPayload: string) => {
         const question = questions[currentQIndex];
@@ -113,7 +129,8 @@ export function PollActiveState({ sessionId, participantId, currentSlideIndex }:
                     session_id: sessionId,
                     question_id: question.id,
                     participant_id: participantId,
-                    answer_text: answerPayload
+                    answer_text: answerPayload,
+                    answered_at: new Date().toISOString(),
                 } as any);
 
             if (submitError) {
@@ -122,6 +139,20 @@ export function PollActiveState({ sessionId, participantId, currentSlideIndex }:
                     return;
                 }
                 throw submitError;
+            }
+
+            // Calcular se a resposta está correta
+            const slideIdx = (question as any).slide_index ?? currentSlideIndex;
+            const correctAns = CORRECT_ANSWERS[slideIdx]?.[currentQIndex];
+
+            if (correctAns !== undefined) {
+                const correct = answerPayload.trim() === correctAns.trim();
+                setIsCorrect(correct);
+                setCorrectAnswerText(correctAns);
+            } else {
+                // Pergunta aberta ou sem gabarito: apenas registrar
+                setIsCorrect(null);
+                setCorrectAnswerText(null);
             }
 
             setSubmitted(true);
@@ -175,7 +206,66 @@ export function PollActiveState({ sessionId, participantId, currentSlideIndex }:
     const question = questions[currentQIndex];
     if (!question) return null;
 
+    // === Tela de feedback (certo / errado / neutro) ===
     if (submitted) {
+        const hasGabarito = isCorrect !== null;
+        const correct = isCorrect === true;
+
+        if (hasGabarito) {
+            return (
+                <div className={`flex flex-col items-center justify-center h-full text-center animate-in zoom-in duration-300 rounded-[2.5rem] p-8 border shadow-2xl backdrop-blur-xl
+                    ${correct
+                        ? 'bg-emerald-950/40 border-emerald-500/30 shadow-emerald-900/20'
+                        : 'bg-red-950/40 border-red-500/30 shadow-red-900/20'
+                    }`}>
+                    {/* Ícone */}
+                    <div className={`w-24 h-24 rounded-[2rem] flex items-center justify-center mb-6 shadow-inner
+                        ${correct ? 'bg-emerald-500/20 border border-emerald-500/30' : 'bg-red-500/20 border border-red-500/30'}`}>
+                        {correct
+                            ? <CheckCircle2 className="w-14 h-14 text-emerald-400" />
+                            : <XCircle className="w-14 h-14 text-red-400" />
+                        }
+                    </div>
+
+                    {/* Título */}
+                    <h2 className={`text-3xl font-extrabold mb-2 tracking-tight ${correct ? 'text-emerald-300' : 'text-red-300'}`}>
+                        {correct ? 'Correto! 🎉' : 'Incorreto 😔'}
+                    </h2>
+
+                    <p className="text-slate-400 text-sm mb-6">
+                        Pergunta {currentQIndex + 1} de {questions.length}
+                    </p>
+
+                    {/* Resposta certa (só mostra se errou) */}
+                    {!correct && correctAnswerText && (
+                        <div className="w-full bg-slate-950/60 border border-white/10 rounded-2xl p-4 mb-6 text-left shadow-inner">
+                            <p className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Resposta Correta</p>
+                            <p className="text-slate-200 text-sm leading-relaxed">{correctAnswerText}</p>
+                        </div>
+                    )}
+
+                    {/* Botão próxima */}
+                    {currentQIndex < questions.length - 1 ? (
+                        <button
+                            onClick={handleNext}
+                            className="px-8 py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-2xl transition-all shadow-lg shadow-blue-500/20 flex items-center gap-2 active:scale-[0.98]"
+                        >
+                            Próxima Pergunta
+                            <ChevronRight className="w-5 h-5" />
+                        </button>
+                    ) : (
+                        <button
+                            onClick={handleNext}
+                            className="px-8 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-2xl transition-all shadow-lg shadow-emerald-500/20 flex items-center gap-2 active:scale-[0.98]"
+                        >
+                            Finalizar Quiz ✓
+                        </button>
+                    )}
+                </div>
+            );
+        }
+
+        // Pergunta aberta ou sem gabarito: feedback neutro
         return (
             <div className="flex flex-col items-center justify-center h-full text-center animate-in zoom-in duration-300">
                 <div className="w-16 h-16 rounded-full bg-emerald-500/20 flex items-center justify-center mb-4">

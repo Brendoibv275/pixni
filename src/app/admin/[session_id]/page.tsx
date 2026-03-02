@@ -99,7 +99,7 @@ export default function AdminDashboard({ params }: { params: Promise<{ session_i
 
                 {/* Status Broadcast */}
                 <div className="p-6 border-b border-slate-800 bg-slate-800/20">
-                    <div className="flex gap-2 mb-6">
+                    <div className="flex gap-2 mb-3">
                         <button
                             onClick={() => router.push('/')}
                             className="flex-1 flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 text-slate-300 py-2 rounded-xl transition-colors text-xs font-bold uppercase tracking-wider"
@@ -113,6 +113,12 @@ export default function AdminDashboard({ params }: { params: Promise<{ session_i
                             <Projector className="w-4 h-4" /> Telão
                         </button>
                     </div>
+                    <button
+                        onClick={() => window.open(`/admin/${session.id}/mobile`, '_blank')}
+                        className="w-full flex items-center justify-center gap-2 bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 py-2 rounded-xl transition-colors text-xs font-bold uppercase tracking-wider border border-emerald-500/20 mb-6"
+                    >
+                        📱 Controle Mobile
+                    </button>
 
                     <div className="flex items-center justify-between mb-4">
                         <span className="text-sm font-semibold text-slate-400">Transmissão WebSocket</span>
