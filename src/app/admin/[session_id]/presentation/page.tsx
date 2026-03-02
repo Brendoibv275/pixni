@@ -212,7 +212,7 @@ export default function PresentationView({ params }: { params: Promise<{ session
                             <span className="text-8xl mb-12">🎓</span>
                             <h2 className="text-6xl font-black text-white mb-8">Sessão Encerrada</h2>
                             <p className="text-3xl text-slate-300 max-w-3xl leading-relaxed">
-                                Muito obrigado a todos! Peguem seus dossiês em PDF pelo celular.
+                                Muito obrigado a todos pela participação!
                             </p>
                         </div>
                     )}

@@ -130,11 +130,6 @@ export function EndSessionState({ sessionId, participantId, participantName }: E
             if (updateError) throw updateError;
 
             setAcceptedMaterial(choice);
-
-            if (choice) {
-                // Se aceitou, podemos opcionalmente enviar o e-mail agora ou apenas avisar
-                await handleSendEmail();
-            }
         } catch (err: any) {
             console.error('Erro ao salvar preferência:', err);
             alert('Erro ao salvar sua preferência. Tente novamente.');
