@@ -260,21 +260,21 @@ export default function AdminDashboard({ params }: { params: Promise<{ session_i
                         {activeTab === 'control' && session.current_state === 'SLIDE_CONTENT' && (
                             isLobby ? (
                                 // DESIGN ESPECÍFICO PARA O LOBBY (Slide 0)
-                                <div className="my-auto flex items-center justify-between gap-12 bg-slate-900/60 backdrop-blur-2xl border border-indigo-500/30 rounded-[3rem] p-16 shadow-[0_0_80px_rgba(99,102,241,0.15)] relative overflow-hidden">
-                                    <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 to-transparent pointer-events-none"></div>
-                                    <div className="flex-1 relative z-10">
-                                        <div className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-indigo-500/20 border border-indigo-500/30 text-indigo-300 text-sm font-black tracking-widest uppercase mb-10 shadow-inner">
+                                <div className="my-auto flex items-center justify-between gap-8 bg-slate-900/60 backdrop-blur-2xl border border-indigo-500/30 rounded-[3rem] p-10 shadow-[0_0_80px_rgba(99,102,241,0.15)] relative">
+                                    <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 to-transparent pointer-events-none rounded-[3rem]"></div>
+                                    <div className="flex-1 relative z-10 min-w-0">
+                                        <div className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-indigo-500/20 border border-indigo-500/30 text-indigo-300 text-sm font-black tracking-widest uppercase mb-8 shadow-inner">
                                             <span className="w-2.5 h-2.5 rounded-full bg-indigo-400 animate-pulse"></span>
                                             AULA AO VIVO
                                         </div>
-                                        <h1 className="text-6xl font-black text-transparent bg-clip-text bg-gradient-to-br from-white to-indigo-200 mb-8 leading-[1.15] tracking-tight drop-shadow-sm">
+                                        <h1 className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-br from-white to-indigo-200 mb-6 leading-[1.15] tracking-tight drop-shadow-sm">
                                             {currentSlide.title}
                                         </h1>
-                                        <p className="text-3xl text-slate-300 mb-14 font-medium leading-relaxed max-w-2xl">
+                                        <p className="text-2xl text-slate-300 mb-10 font-medium leading-relaxed max-w-2xl">
                                             {currentSlide.content}
                                         </p>
 
-                                        <div className="bg-slate-950/80 border border-slate-700/50 rounded-[2rem] p-8 inline-block shadow-2xl backdrop-blur-md">
+                                        <div className="bg-slate-950/80 border border-slate-700/50 rounded-[2rem] p-6 inline-block shadow-2xl backdrop-blur-md">
                                             <p className="text-slate-400 text-sm uppercase tracking-widest font-black flex items-center gap-3 mb-4">
                                                 <QrCode className="w-5 h-5 text-indigo-400" /> Ou acesse pelo link:
                                             </p>
@@ -288,10 +288,10 @@ export default function AdminDashboard({ params }: { params: Promise<{ session_i
                                     </div>
 
                                     <div className="shrink-0 flex flex-col items-center relative z-10">
-                                        <div className="bg-white p-8 rounded-[2.5rem] shadow-[0_0_50px_rgba(255,255,255,0.1)] ring-8 ring-white/5 mb-8 transform hover:scale-105 transition-transform duration-500">
+                                        <div className="bg-white p-5 rounded-[2rem] shadow-[0_0_50px_rgba(255,255,255,0.1)] ring-8 ring-white/5 mb-6 transform hover:scale-105 transition-transform duration-500">
                                             <QRCodeSVG
                                                 value={joinUrl}
-                                                size={340}
+                                                size={260}
                                                 bgColor="#ffffff"
                                                 fgColor="#0f172a"
                                                 level="Q"
