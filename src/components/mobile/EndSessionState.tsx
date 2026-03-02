@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase/client';
 import { CORRECT_ANSWERS } from '@/data/slidesDeck';
-import { Download, Loader2, Trophy, BookOpen, Sparkles } from 'lucide-react';
+import { Download, Loader2, Trophy, BookOpen, Sparkles, Check } from 'lucide-react';
 
 interface EndSessionProps {
     sessionId: string;
@@ -25,6 +25,8 @@ export function EndSessionState({ sessionId, participantId, participantName }: E
     const [generatedPrompt, setGeneratedPrompt] = useState('');
     const [downloading, setDownloading] = useState(false);
     const [participantEmail, setParticipantEmail] = useState('');
+    const [acceptedMaterial, setAcceptedMaterial] = useState<boolean | null>(null);
+    const [saving, setSaving] = useState(false);
 
     useEffect(() => {
         loadResults();
@@ -114,6 +116,33 @@ export function EndSessionState({ sessionId, participantId, participantName }: E
         }
     };
 
+    const handleConsent = async (choice: boolean) => {
+        setSaving(true);
+        try {
+            // Atualiza o participante no Supabase
+            const { error: updateError } = await (supabase.from('participants') as any)
+                .update({
+                    material: choice,
+                    personal_prompt: choice ? generatedPrompt : null
+                })
+                .eq('id', participantId);
+
+            if (updateError) throw updateError;
+
+            setAcceptedMaterial(choice);
+
+            if (choice) {
+                // Se aceitou, podemos opcionalmente enviar o e-mail agora ou apenas avisar
+                await handleSendEmail();
+            }
+        } catch (err: any) {
+            console.error('Erro ao salvar preferência:', err);
+            alert('Erro ao salvar sua preferência. Tente novamente.');
+        } finally {
+            setSaving(false);
+        }
+    };
+
     const handleSendEmail = async () => {
         setDownloading(true);
         try {
@@ -130,10 +159,9 @@ export function EndSessionState({ sessionId, participantId, participantName }: E
             });
             const data = await response.json();
             if (!response.ok) throw new Error(data.error || 'Erro ao enviar e-mail');
-            alert('Relatório enviado com sucesso para o seu e-mail!');
+            // alert('Relatório enviado com sucesso!'); // Removido alert para não quebrar o fluxo
         } catch (err: any) {
             console.error('Erro ao enviar e-mail:', err);
-            alert(`Erro: ${err.message || 'Problema no servidor. Se persistir contate o professor.'}`);
         } finally {
             setDownloading(false);
         }
@@ -173,43 +201,57 @@ export function EndSessionState({ sessionId, participantId, participantName }: E
                 </div>
             )}
 
-            {/* What's in the PDF */}
-            <div className="space-y-2 mb-6">
-                <p className="text-xs uppercase tracking-widest text-slate-500 font-bold px-1">Seu dossiê contém:</p>
-                <div className="flex items-center gap-3 text-slate-300 text-sm bg-slate-900/50 p-3 rounded-xl border border-slate-800">
-                    <Trophy className="w-4 h-4 text-emerald-400 shrink-0" />
-                    <span>Desempenho nos quizzes com gabarito</span>
-                </div>
-                <div className="flex items-center gap-3 text-slate-300 text-sm bg-slate-900/50 p-3 rounded-xl border border-slate-800">
-                    <BookOpen className="w-4 h-4 text-blue-400 shrink-0" />
-                    <span>Resumo: LLM, API, Prompt, RAG, Agentes</span>
-                </div>
-                {generatedPrompt && (
-                    <div className="flex items-center gap-3 text-slate-300 text-sm bg-slate-900/50 p-3 rounded-xl border border-slate-800">
-                        <Sparkles className="w-4 h-4 text-purple-400 shrink-0" />
-                        <span>Seu Prompt de Alta Performance</span>
+            {/* Consent Question / Success Message */}
+            <div className="flex-1 flex flex-col justify-center">
+                {acceptedMaterial === null ? (
+                    <div className="bg-slate-900 border border-slate-800 rounded-3xl p-8 text-center animate-in zoom-in duration-300">
+                        <div className="w-20 h-20 bg-emerald-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <Sparkles className="w-10 h-10 text-emerald-400" />
+                        </div>
+                        <h3 className="text-xl font-bold text-white mb-4">
+                            Aceita receber o material via e-mail?
+                        </h3>
+                        <p className="text-slate-400 text-sm mb-8">
+                            Enviaremos seu resumo da avaliação e seu prompt pessoal para <span className="text-emerald-400 font-medium">{participantEmail}</span>.
+                        </p>
+
+                        <div className="grid grid-cols-2 gap-4">
+                            <button
+                                onClick={() => handleConsent(false)}
+                                disabled={saving}
+                                className="py-4 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-2xl transition-all active:scale-[0.98] disabled:opacity-50"
+                            >
+                                Não
+                            </button>
+                            <button
+                                onClick={() => handleConsent(true)}
+                                disabled={saving}
+                                className="py-4 bg-gradient-to-r from-emerald-600 to-blue-600 hover:from-emerald-500 hover:to-blue-500 text-white font-bold rounded-2xl transition-all shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-2 active:scale-[0.98] disabled:opacity-50"
+                            >
+                                {saving ? (
+                                    <Loader2 className="w-5 h-5 animate-spin" />
+                                ) : (
+                                    'Sim'
+                                )}
+                            </button>
+                        </div>
+                    </div>
+                ) : (
+                    <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-3xl p-8 text-center animate-in fade-in duration-500">
+                        <div className="w-16 h-16 bg-emerald-500 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg shadow-emerald-500/20">
+                            <Check className="w-8 h-8 text-white" />
+                        </div>
+                        <h3 className="text-xl font-bold text-white mb-2">
+                            {acceptedMaterial ? 'Tudo pronto!' : 'Obrigado!'}
+                        </h3>
+                        <p className="text-slate-400 text-sm">
+                            {acceptedMaterial
+                                ? 'Em alguns minutos você receberá o material no seu e-mail.'
+                                : 'Suas respostas foram salvas. Obrigado por participar!'}
+                        </p>
                     </div>
                 )}
             </div>
-
-            {/* Send Email Button */}
-            <button
-                onClick={handleSendEmail}
-                disabled={downloading}
-                className="w-full py-5 bg-gradient-to-r from-emerald-600 to-blue-600 hover:from-emerald-500 hover:to-blue-500 text-white font-bold rounded-2xl transition-all shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-3 active:scale-[0.98] disabled:opacity-50 text-lg"
-            >
-                {downloading ? (
-                    <>
-                        <Loader2 className="w-6 h-6 animate-spin" />
-                        Enviando...
-                    </>
-                ) : (
-                    <>
-                        <Sparkles className="w-6 h-6" />
-                        Enviar Relatório por E-mail
-                    </>
-                )}
-            </button>
         </div>
     );
 }
