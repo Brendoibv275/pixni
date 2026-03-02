@@ -74,13 +74,13 @@ export default function PresentationView({ params }: { params: Promise<{ session
                     {session.current_state === 'SLIDE_CONTENT' && (
                         isLobby ? (
                             // DESIGN ESPECÍFICO PARA O LOBBY (Slide 0)
-                            <div className="my-auto flex items-center justify-between gap-16 bg-slate-900/60 backdrop-blur-2xl border border-indigo-500/30 rounded-[4rem] p-24 shadow-[0_0_100px_rgba(99,102,241,0.15)] relative overflow-hidden">
-                                <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 to-transparent pointer-events-none"></div>
-                                <div className="flex-1 relative z-10">
+                            <div className="my-auto flex items-center justify-between gap-12 bg-slate-900/60 backdrop-blur-2xl border border-indigo-500/30 rounded-[4rem] p-14 shadow-[0_0_100px_rgba(99,102,241,0.15)] relative">
+                                <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 to-transparent pointer-events-none rounded-[4rem]"></div>
+                                <div className="flex-1 relative z-10 min-w-0">
                                     <h1 className="text-7xl font-black text-transparent bg-clip-text bg-gradient-to-br from-white to-indigo-200 mb-10 leading-[1.1] tracking-tight drop-shadow-md">
                                         {currentSlide.title}
                                     </h1>
-                                    <p className="text-4xl text-slate-300 mb-16 font-medium leading-relaxed max-w-3xl">
+                                    <p className="text-4xl text-slate-300 mb-14 font-medium leading-relaxed max-w-3xl">
                                         {currentSlide.content}
                                     </p>
 
@@ -98,10 +98,10 @@ export default function PresentationView({ params }: { params: Promise<{ session
                                 </div>
 
                                 <div className="shrink-0 flex flex-col items-center relative z-10">
-                                    <div className="bg-white p-10 rounded-[3rem] shadow-[0_0_80px_rgba(255,255,255,0.15)] ring-8 ring-white/10 mb-10">
+                                    <div className="bg-white p-7 rounded-[2.5rem] shadow-[0_0_80px_rgba(255,255,255,0.15)] ring-8 ring-white/10 mb-10">
                                         <QRCodeSVG
                                             value={joinUrl}
-                                            size={440}
+                                            size={340}
                                             bgColor="#ffffff"
                                             fgColor="#0f172a"
                                             level="Q"
