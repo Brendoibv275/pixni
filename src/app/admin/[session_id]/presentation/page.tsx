@@ -89,7 +89,7 @@ export default function PresentationView({ params }: { params: Promise<{ session
                                             <QrCode className="w-8 h-8 text-indigo-400" /> Ou acesse no navegador:
                                         </p>
                                         <div className="flex items-center gap-8">
-                                            <span className="text-4xl text-white font-medium">pixni.app/join</span>
+                                            <span className="text-4xl text-white font-medium">pixacademy.netlify.app</span>
                                             <span className="bg-gradient-to-r from-indigo-600 to-blue-600 text-white px-8 py-4 rounded-xl font-mono text-5xl font-black tracking-widest shadow-lg shadow-indigo-500/40 border border-indigo-400/30">
                                                 {session.pin}
                                             </span>

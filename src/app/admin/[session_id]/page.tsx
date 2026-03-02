@@ -273,7 +273,7 @@ export default function AdminDashboard({ params }: { params: Promise<{ session_i
                                                 <QrCode className="w-5 h-5 text-indigo-400" /> Ou acesse pelo link:
                                             </p>
                                             <div className="flex items-center gap-6">
-                                                <span className="text-2xl text-white font-medium">pixni.app/join</span>
+                                                <span className="text-2xl text-white font-medium">pixacademy.netlify.app</span>
                                                 <span className="bg-gradient-to-r from-indigo-600 to-blue-600 text-white px-6 py-3 rounded-xl font-mono text-3xl font-black tracking-widest shadow-lg shadow-indigo-500/40 border border-indigo-400/30">
                                                     {session.pin}
                                                 </span>
