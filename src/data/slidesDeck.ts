@@ -358,17 +358,21 @@ export function getSlideState(index: number): SlideState {
     return getSlide(index).state;
 }
 
-// Respostas corretas para cálculo de score no PDF
-export const CORRECT_ANSWERS: Record<number, Record<number, string>> = {
-    // slide_index -> { question_local_index -> answer_text }
-    // Slide 6 – Quiz APIs
-    6: {
-        0: "Através de uma 'ponte' chamada API, que conecta nosso aplicativo ao cérebro da IA",
-        1: "Permitem delegar tarefas complexas para o computador usando a nossa língua do dia a dia"
-    },
-    // Slide 13 – Quiz Pós-Pausa  
-    13: {
-        0: "Porque ela é uma máquina de adivinhação estatística que preencheu lacunas com falta de contexto real",
-        1: "Ela esquece o início porque sua 'memória de curto prazo' esgotou"
-    }
+// Respostas corretas mapeadas DIRETAMENTE pelo ID da pergunta no banco.
+// Isso garante avaliação correta independente da ordem de retorno do banco.
+// Para atualizar: copie o ID exato da tabela `questions` no Supabase.
+export const CORRECT_ANSWERS: Record<string, string> = {
+    // Slide 6 – "No ambiente corporativo, qual o verdadeiro poder..."
+    '2be8f1d4-885a-4b12-8672-3e7ff51c2fe7': "Permitem delegar tarefas complexas para o computador usando a nossa língua do dia a dia",
+
+    // Slide 6 – "Como a PIXNI consegue colocar a inteligência do Gemini..."
+    '6065fb15-5f6e-4d44-8ea7-a44f9d385e12': "Através de uma 'ponte' chamada API, que conecta nosso aplicativo ao cérebro da IA",
+
+    // Slide 13 – "Você pediu para a IA resumir um edital enorme..."
+    '0c790b1e-7505-4c43-a60e-580f93e543ad': "Ela esquece o início porque sua 'memória de curto prazo' esgotou",
+
+    // Slide 13 – "O consultor pediu um modelo de plano e a IA inventou dados falsos..."
+    '7ebaf6c8-1a2a-44b3-80f1-6bae657112e9': "Porque ela é uma máquina de adivinhação estatística que preencheu lacunas com falta de contexto real",
 };
+
+

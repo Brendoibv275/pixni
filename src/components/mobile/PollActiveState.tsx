@@ -102,9 +102,8 @@ export function PollActiveState({ sessionId, participantId, currentSlideIndex }:
             const existing = data && data.length > 0 ? (data[0] as any) : null;
             if (existing) {
                 setSubmitted(true);
-                // Recalculate correct/incorrect for already-answered questions
-                const slideIdx = (question as any).slide_index ?? currentSlideIndex;
-                const correctAns = CORRECT_ANSWERS[slideIdx]?.[currentQIndex];
+                // Lookup by question ID — deterministic, no ordering dependency
+                const correctAns = CORRECT_ANSWERS[question.id];
                 if (correctAns !== undefined) {
                     setIsCorrect((existing.answer_text as string).trim() === correctAns.trim());
                     setCorrectAnswerText(correctAns);
@@ -141,9 +140,8 @@ export function PollActiveState({ sessionId, participantId, currentSlideIndex }:
                 throw submitError;
             }
 
-            // Calcular se a resposta está correta
-            const slideIdx = (question as any).slide_index ?? currentSlideIndex;
-            const correctAns = CORRECT_ANSWERS[slideIdx]?.[currentQIndex];
+            // Calcular se a resposta está correta — lookup direto pelo ID da pergunta
+            const correctAns = CORRECT_ANSWERS[question.id];
 
             if (correctAns !== undefined) {
                 const correct = answerPayload.trim() === correctAns.trim();

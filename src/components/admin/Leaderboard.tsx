@@ -37,10 +37,10 @@ export function Leaderboard({ sessionId }: LeaderboardProps) {
                     return;
                 }
 
-                // 2. Fetch questions to know slide_index and question_type
+                // 2. Fetch questions to know question_type
                 const { data: questions } = await supabase
                     .from('questions')
-                    .select('id, slide_index, question_type')
+                    .select('id, question_type')
                     .order('created_at', { ascending: true });
 
                 const questionsMap = new Map((questions as any[])?.map(q => [q.id, q]) || []);
@@ -50,13 +50,6 @@ export function Leaderboard({ sessionId }: LeaderboardProps) {
                     .from('answers')
                     .select('participant_id, question_id, answer_text, answered_at')
                     .eq('session_id', sessionId);
-
-                // Group questions by slide_index to determine local indexes for CORRECT_ANSWERS
-                const slideQuestions: Record<number, string[]> = {};
-                (questions as any[])?.forEach(q => {
-                    if (!slideQuestions[q.slide_index]) slideQuestions[q.slide_index] = [];
-                    slideQuestions[q.slide_index].push(q.id);
-                });
 
                 const scores: PlayerScore[] = (participants as any[]).map(p => ({
                     id: p.id,
@@ -72,19 +65,13 @@ export function Leaderboard({ sessionId }: LeaderboardProps) {
                         const qInfo = questionsMap.get(ans.question_id);
                         if (!qInfo || qInfo.question_type !== 'MULTIPLE_CHOICE') return;
 
-                        const sIndex = qInfo.slide_index;
-                        // Find local question index (0, 1, 2...) for the slide based on creation order
-                        const qIdx = slideQuestions[sIndex]?.indexOf(ans.question_id) ?? -1;
-
-                        if (qIdx !== -1) {
-                            const correctAns = CORRECT_ANSWERS[sIndex]?.[qIdx];
-                            if (correctAns && ans.answer_text.trim() === correctAns.trim()) {
-                                const player = scoreMap.get(ans.participant_id);
-                                if (player) {
-                                    player.score += 1;
-                                    // Adiciona o timestamp (em millis). Menor timestamp = respondeu primeiro
-                                    player.timeCost += new Date(ans.answered_at).getTime();
-                                }
+                        // Direct lookup by question ID — no ordering dependency
+                        const correctAns = CORRECT_ANSWERS[ans.question_id];
+                        if (correctAns && ans.answer_text.trim() === correctAns.trim()) {
+                            const player = scoreMap.get(ans.participant_id);
+                            if (player) {
+                                player.score += 1;
+                                player.timeCost += new Date(ans.answered_at).getTime();
                             }
                         }
                     });
