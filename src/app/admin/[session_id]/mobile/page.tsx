@@ -145,6 +145,35 @@ export default function AdminMobilePage({ params }: { params: Promise<{ session_
             {/* Main content */}
             <main className="flex-1 px-4 pt-5 pb-28 flex flex-col gap-4 max-w-lg mx-auto w-full">
 
+                {/* Horizontal Slide Quick Navigation */}
+                {activeTab === 'control' && (
+                    <div className="flex gap-2 overflow-x-auto pb-2 no-scrollbar scroll-smooth snap-x">
+                        {Array.from({ length: TOTAL_SLIDES }).map((_, i) => {
+                            const slide = getSlide(i);
+                            const isActive = session.current_slide_index === i;
+                            return (
+                                <button
+                                    key={i}
+                                    onClick={async () => {
+                                        if (isNavigating) return;
+                                        setIsNavigating(true);
+                                        await updateSessionState({
+                                            current_slide_index: i,
+                                            current_state: getSlideState(i) as SessionState,
+                                        });
+                                        setIsNavigating(false);
+                                    }}
+                                    className={`snap-center flex-shrink-0 w-12 h-12 flex flex-col items-center justify-center rounded-xl border transition-all
+                                        ${isActive ? 'bg-indigo-600 border-indigo-400 text-white shadow-lg shadow-indigo-500/30' : 'bg-slate-900 border-white/5 text-slate-500'}`}
+                                >
+                                    <span className="text-[10px] font-black leading-none mb-0.5">{i}</span>
+                                    <span className="text-xs leading-none">{slide.icon}</span>
+                                </button>
+                            );
+                        })}
+                    </div>
+                )}
+
                 {/* === CONTROL TAB === */}
                 {activeTab === 'control' && (
                     <>
@@ -244,9 +273,34 @@ export default function AdminMobilePage({ params }: { params: Promise<{ session_
                 {/* === USERS TAB === */}
                 {activeTab === 'users' && (
                     <div className="bg-slate-900/60 backdrop-blur-md border border-white/5 rounded-3xl p-5 shadow-xl">
-                        <h2 className="text-base font-bold text-white mb-4 flex items-center gap-2">
-                            <Users className="w-5 h-5 text-indigo-400" /> Alunos Conectados
-                        </h2>
+                        <div className="flex justify-between items-center mb-6">
+                            <h2 className="text-base font-bold text-white flex items-center gap-2">
+                                <Users className="w-5 h-5 text-indigo-400" /> Alunos
+                            </h2>
+                            <button
+                                onClick={async () => {
+                                    if (!confirm('Reenviar e-mails pendentes agora?')) return;
+                                    try {
+                                        const res = await fetch('/api/admin/resend-pending', {
+                                            method: 'POST',
+                                            headers: { 'Content-Type': 'application/json' },
+                                            body: JSON.stringify({ sessionId: session.id })
+                                        });
+                                        const data = await res.json();
+                                        if (res.ok && data.details) {
+                                            alert(`Resumo enviado para ${data.details.filter((r: any) => r.status === 'success').length} alunos!`);
+                                        } else {
+                                            alert('Erro: ' + (data.error || 'Falha ao processar'));
+                                        }
+                                    } catch (err: any) {
+                                        alert('Erro de rede: ' + err.message);
+                                    }
+                                }}
+                                className="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider shadow-lg shadow-emerald-500/20 transition-all active:scale-95"
+                            >
+                                Reenviar Dossiês
+                            </button>
+                        </div>
                         <ParticipantsList sessionId={session.id} />
                     </div>
                 )}

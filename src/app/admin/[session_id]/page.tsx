@@ -76,10 +76,10 @@ export default function AdminDashboard({ params }: { params: Promise<{ session_i
     const isLobby = session.current_slide_index === 0 && session.current_state === 'SLIDE_CONTENT';
 
     return (
-        <div className="min-h-screen bg-slate-950 flex text-slate-300">
+        <div className="min-h-screen bg-slate-950 flex flex-col lg:flex-row text-slate-300 overflow-x-hidden">
 
-            {/* SIDEBAR */}
-            <aside className="w-80 bg-slate-900 border-r border-slate-800 flex flex-col z-10 shadow-xl shadow-slate-900/50 shrink-0">
+            {/* SIDEBAR - Collapsible/Responsive */}
+            <aside className="w-full lg:w-80 bg-slate-900 border-b lg:border-b-0 lg:border-r border-slate-800 flex flex-col z-10 shadow-xl shadow-slate-900/50 shrink-0 max-h-[40vh] lg:max-h-screen overflow-y-auto">
 
                 <div className="p-6 border-b border-slate-800">
                     <div className="flex items-center gap-3 text-indigo-400 mb-2">
@@ -244,51 +244,52 @@ export default function AdminDashboard({ params }: { params: Promise<{ session_i
 
                         {activeTab === 'control' && session.current_state === 'SLIDE_CONTENT' && (
                             isLobby ? (
-                                <div className="my-auto flex items-center justify-between gap-8 bg-slate-900/60 backdrop-blur-2xl border border-indigo-500/30 rounded-[3rem] p-10 shadow-[0_0_80px_rgba(99,102,241,0.15)] relative">
-                                    <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 to-transparent pointer-events-none rounded-[3rem]"></div>
-                                    <div className="flex-1 relative z-10 min-w-0">
-                                        <div className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-indigo-500/20 border border-indigo-500/30 text-indigo-300 text-sm font-black tracking-widest uppercase mb-8 shadow-inner">
+                                <div className="my-auto flex flex-col lg:flex-row items-center justify-between gap-8 bg-slate-900/60 backdrop-blur-2xl border border-indigo-500/30 rounded-3xl lg:rounded-[3rem] p-6 lg:p-10 shadow-[0_0_80px_rgba(99,102,241,0.15)] relative">
+                                    <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 to-transparent pointer-events-none rounded-3xl lg:rounded-[3rem]"></div>
+                                    <div className="flex-1 relative z-10 min-w-0 w-full text-center lg:text-left">
+                                        <div className="inline-flex items-center gap-3 px-4 py-2 lg:px-5 lg:py-2.5 rounded-full bg-indigo-500/20 border border-indigo-500/30 text-indigo-300 text-[10px] lg:text-sm font-black tracking-widest uppercase mb-6 lg:mb-8 shadow-inner">
                                             <span className="w-2.5 h-2.5 rounded-full bg-indigo-400 animate-pulse"></span>
                                             AULA AO VIVO
                                         </div>
-                                        <h1 className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-br from-white to-indigo-200 mb-6 leading-[1.15] tracking-tight drop-shadow-sm">
+                                        <h1 className="text-3xl lg:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-br from-white to-indigo-200 mb-4 lg:mb-6 leading-tight lg:leading-[1.15] tracking-tight drop-shadow-sm">
                                             {currentSlide.title}
                                         </h1>
-                                        <p className="text-2xl text-slate-300 mb-10 font-medium leading-relaxed max-w-2xl">
+                                        <p className="text-lg lg:text-2xl text-slate-300 mb-6 lg:mb-10 font-medium leading-relaxed max-w-2xl mx-auto lg:mx-0">
                                             {currentSlide.content}
                                         </p>
 
-                                        <div className="bg-slate-950/80 border border-slate-700/50 rounded-[2rem] p-6 inline-block shadow-2xl backdrop-blur-md">
-                                            <p className="text-slate-400 text-sm uppercase tracking-widest font-black flex items-center gap-3 mb-4">
-                                                <QrCode className="w-5 h-5 text-indigo-400" /> Ou acesse pelo link:
+                                        <div className="bg-slate-950/80 border border-slate-700/50 rounded-2xl lg:rounded-[2rem] p-4 lg:p-6 inline-block shadow-2xl backdrop-blur-md w-full lg:w-auto">
+                                            <p className="text-slate-400 text-[10px] lg:text-sm uppercase tracking-widest font-black flex items-center justify-center lg:justify-start gap-3 mb-4">
+                                                <QrCode className="w-4 h-4 lg:w-5 h-5 text-indigo-400" /> Ou acesse pelo link:
                                             </p>
-                                            <div className="flex items-center gap-6">
-                                                <span className="text-2xl text-white font-medium">pixacademy.netlify.app</span>
-                                                <span className="bg-gradient-to-r from-indigo-600 to-blue-600 text-white px-6 py-3 rounded-xl font-mono text-3xl font-black tracking-widest shadow-lg shadow-indigo-500/40 border border-indigo-400/30">
+                                            <div className="flex flex-col lg:flex-row items-center gap-4 lg:gap-6">
+                                                <span className="text-lg lg:text-2xl text-white font-medium">pixacademy.netlify.app</span>
+                                                <span className="bg-gradient-to-r from-indigo-600 to-blue-600 text-white px-4 py-2 lg:px-6 lg:py-3 rounded-xl font-mono text-xl lg:text-3xl font-black tracking-widest shadow-lg shadow-indigo-500/40 border border-indigo-400/30">
                                                     {session.pin}
                                                 </span>
                                             </div>
                                         </div>
                                     </div>
 
-                                    <div className="shrink-0 flex flex-col items-center relative z-10">
-                                        <div className="bg-white p-5 rounded-[2rem] shadow-[0_0_50px_rgba(255,255,255,0.1)] ring-8 ring-white/5 mb-6 transform hover:scale-105 transition-transform duration-500">
+                                    <div className="shrink-0 flex flex-col items-center relative z-10 w-full lg:w-auto">
+                                        <div className="bg-white p-3 lg:p-5 rounded-2xl lg:rounded-[2rem] shadow-[0_0_50px_rgba(255,255,255,0.1)] ring-4 lg:ring-8 ring-white/5 mb-4 lg:mb-6 transform hover:scale-105 transition-transform duration-500">
                                             <QRCodeSVG
                                                 value={joinUrl}
-                                                size={260}
+                                                size={180}
+                                                className="lg:w-[260px] lg:h-[260px]"
                                                 bgColor="#ffffff"
                                                 fgColor="#0f172a"
                                                 level="Q"
                                                 marginSize={1}
                                             />
                                         </div>
-                                        <p className="text-indigo-300 font-bold text-lg flex items-center gap-3 uppercase tracking-widest">
-                                            <span className="animate-bounce text-2xl">↑</span> Aponte a câmera
+                                        <p className="text-indigo-300 font-bold text-sm lg:text-lg flex items-center gap-2 lg:gap-3 uppercase tracking-widest">
+                                            <span className="animate-bounce text-xl lg:text-2xl">↑</span> Aponte a câmera
                                         </p>
                                     </div>
                                 </div>
                             ) : (
-                                <div className={`my-auto w-full rounded-[3.5rem] backdrop-blur-2xl border p-12 lg:p-16 shadow-2xl relative overflow-hidden transition-all duration-700
+                                <div className={`my-auto w-full rounded-3xl lg:rounded-[3.5rem] backdrop-blur-2xl border p-6 lg:p-16 shadow-2xl relative overflow-hidden transition-all duration-700
                                     ${currentSlide.phase === 'Introdução' ? 'bg-indigo-950/30 border-indigo-500/20 shadow-[0_0_80px_rgba(99,102,241,0.15)] ring-1 ring-indigo-500/10' :
                                         currentSlide.phase === 'Módulo 1' ? 'bg-violet-950/30 border-violet-500/20 shadow-[0_0_80px_rgba(139,92,246,0.15)] ring-1 ring-violet-500/10' :
                                             currentSlide.phase === 'Módulo 2' ? 'bg-purple-950/30 border-purple-500/20 shadow-[0_0_80px_rgba(168,85,247,0.15)] ring-1 ring-purple-500/10' :
@@ -297,23 +298,23 @@ export default function AdminDashboard({ params }: { params: Promise<{ session_i
                                     }
                                 `}>
                                     <div className="absolute top-0 right-0 w-full h-full bg-gradient-to-br from-white/5 to-transparent pointer-events-none"></div>
-                                    <div className="relative z-10 w-full flex flex-col lg:flex-row gap-16 lg:gap-24 items-center justify-between animate-in fade-in zoom-in-[0.98] duration-1000">
-                                        <div className={`flex-1 flex flex-col ${!currentSlide.bullets ? 'items-center text-center max-w-4xl mx-auto' : 'items-start text-left shrink-0 max-w-xl'}`}>
-                                            <div className={`w-32 h-32 bg-slate-900/50 border border-white/10 rounded-[2rem] flex items-center justify-center mb-10 shadow-inner backdrop-blur-md relative overflow-hidden group`}>
-                                                <span className="text-7xl drop-shadow-xl transform group-hover:scale-110 transition-transform duration-500">{currentSlide.icon}</span>
+                                    <div className="relative z-10 w-full flex flex-col lg:flex-row gap-8 lg:gap-24 items-center justify-between animate-in fade-in zoom-in-[0.98] duration-1000">
+                                        <div className={`flex-1 flex flex-col ${!currentSlide.bullets ? 'items-center text-center max-w-4xl mx-auto' : 'items-start text-left shrink-0 lg:max-w-xl'}`}>
+                                            <div className={`w-16 h-16 lg:w-32 lg:h-32 bg-slate-900/50 border border-white/10 rounded-2xl lg:rounded-[2rem] flex items-center justify-center mb-6 lg:mb-10 shadow-inner backdrop-blur-md relative overflow-hidden group`}>
+                                                <span className="text-4xl lg:text-7xl drop-shadow-xl transform group-hover:scale-110 transition-transform duration-500">{currentSlide.icon}</span>
                                             </div>
-                                            <h2 className="text-5xl lg:text-[4rem] font-black text-transparent bg-clip-text bg-gradient-to-br from-white via-slate-100 to-slate-400 mb-8 leading-[1.1] tracking-tight drop-shadow-sm">
+                                            <h2 className="text-3xl lg:text-[4rem] font-black text-transparent bg-clip-text bg-gradient-to-br from-white via-slate-100 to-slate-400 mb-4 lg:mb-8 leading-tight lg:leading-[1.1] tracking-tight drop-shadow-sm">
                                                 {currentSlide.title}
                                             </h2>
-                                            <p className={`text-2xl text-slate-300 leading-relaxed font-medium ${!currentSlide.bullets ? 'text-center' : ''}`}>
+                                            <p className={`text-base lg:text-2xl text-slate-300 leading-relaxed font-medium ${!currentSlide.bullets ? 'text-center' : ''}`}>
                                                 {currentSlide.content}
                                             </p>
                                         </div>
                                         {currentSlide.bullets && (
-                                            <div className="flex-1 w-full space-y-5">
+                                            <div className="flex-1 w-full space-y-3 lg:space-y-5">
                                                 {currentSlide.bullets.map((bullet, i) => (
-                                                    <div key={i} className="flex items-center gap-6 text-slate-200 text-xl bg-slate-950/60 hover:bg-slate-900/90 backdrop-blur-2xl p-7 rounded-3xl border border-white/10 shadow-2xl transition-all duration-300 hover:scale-[1.03] hover:-translate-y-2 group">
-                                                        <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 shadow-inner
+                                                    <div key={i} className="flex items-center gap-4 lg:gap-6 text-slate-200 text-sm lg:text-xl bg-slate-950/60 hover:bg-slate-900/90 backdrop-blur-2xl p-4 lg:p-7 rounded-2xl lg:rounded-3xl border border-white/10 shadow-2xl transition-all duration-300 hover:scale-[1.03] lg:hover:-translate-y-2 group">
+                                                        <div className={`w-8 h-8 lg:w-12 lg:h-12 rounded-lg lg:rounded-2xl flex items-center justify-center shrink-0 shadow-inner
                                                             ${currentSlide.phase === 'Introdução' ? 'bg-indigo-500/20 text-indigo-400' :
                                                                 currentSlide.phase === 'Módulo 1' ? 'bg-violet-500/20 text-violet-400' :
                                                                     currentSlide.phase === 'Módulo 2' ? 'bg-purple-500/20 text-purple-400' :
@@ -321,7 +322,7 @@ export default function AdminDashboard({ params }: { params: Promise<{ session_i
                                                                             'bg-blue-500/20 text-blue-400'
                                                             }
                                                         `}>
-                                                            <span className="font-black text-2xl drop-shadow-md transition-transform group-hover:rotate-12">✦</span>
+                                                            <span className="font-black text-lg lg:text-2xl drop-shadow-md transition-transform group-hover:rotate-12">✦</span>
                                                         </div>
                                                         <span className="leading-snug font-semibold">{bullet}</span>
                                                     </div>
