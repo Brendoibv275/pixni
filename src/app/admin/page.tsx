@@ -32,8 +32,9 @@ export default function AdminLogin() {
 
             router.push('/admin/dashboard');
         } catch (err: any) {
-            console.error(err);
-            setError('Falha no login. Verifique suas credenciais.');
+            console.error('Login error:', err);
+            // Mostrar o erro exato que a API do Supabase retornar
+            setError(`Erro: ${err.message || 'Falha no login. Verifique suas credenciais.'}`);
         } finally {
             setLoading(false);
         }

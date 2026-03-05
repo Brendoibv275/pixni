@@ -14,6 +14,7 @@
 export type SlideState = 'SLIDE_CONTENT' | 'POLL_ACTIVE' | 'BROKEN_TELEPHONE' | 'AI_PROMPT_BUILDER' | 'RAG_VISUALIZER' | 'AGENT_SIMULATOR' | 'END_SESSION';
 
 export interface Slide {
+    id?: string;
     title: string;
     content: string;
     bullets?: string[];
@@ -113,6 +114,7 @@ export const SLIDES_DECK: Slide[] = [
     //  SLIDE 6 – Quiz Fixação Introdução (2 perguntas)
     // =====================================================
     {
+        id: 'quiz-intro',
         title: "Quiz Rápido: APIs e LLMs",
         content: "Vamos testar o que absorveram sobre APIs e LLMs com 2 perguntas rápidas.",
         state: 'POLL_ACTIVE',
@@ -212,6 +214,7 @@ export const SLIDES_DECK: Slide[] = [
     //  SLIDE 13 – Quiz Pós-Pausa (2 perguntas)
     // =====================================================
     {
+        id: 'quiz-m1',
         title: "Quiz Pós-Pausa: Teste de Atenção",
         content: "Vamos ver quem prestou atenção antes do café! 2 perguntas sobre o Módulo 1.",
         state: 'POLL_ACTIVE',
@@ -373,6 +376,13 @@ export const CORRECT_ANSWERS: Record<string, string> = {
 
     // Slide 13 – "O consultor pediu um modelo de plano e a IA inventou dados falsos..."
     '7ebaf6c8-1a2a-44b3-80f1-6bae657112e9': "Porque ela é uma máquina de adivinhação estatística que preencheu lacunas com falta de contexto real",
+};
+
+export const QUIZ_QUESTIONS: Record<string, string> = {
+    '2be8f1d4-885a-4b12-8672-3e7ff51c2fe7': "No ambiente corporativo, qual o verdadeiro poder das LLMs?",
+    '6065fb15-5f6e-4d44-8ea7-a44f9d385e12': "Como a PIXNI coloca a inteligência do Gemini em seus sistemas?",
+    '0c790b1e-7505-4c43-a60e-580f93e543ad': "Por que a IA esqueceu o início de um edital enorme?",
+    '7ebaf6c8-1a2a-44b3-80f1-6bae657112e9': "Por que a IA inventou dados falsos num plano de consultoria?",
 };
 
 
